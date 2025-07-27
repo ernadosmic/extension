@@ -1,8 +1,9 @@
 {
     "name": "vscode-file-audit",
     "displayName": "File Audit Markers",
+    "publisher": "ernadosmic",
     "description": "Mark files as reviewed or trash in the VSCode Explorer",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "engines": {
         "vscode": "^1.70.0"
     },
@@ -23,6 +24,11 @@
             {
                 "command": "fileAudit.clearMarks",
                 "title": "🟡 Clear Mark"
+            },
+            {
+                "command": "fileAudit.toggleBadges",
+                "title": "Toggle File Audit Markers",
+                "icon": "$(layers-active)"
             }
         ],
         "menus": {
@@ -37,6 +43,13 @@
                 },
                 {
                     "command": "fileAudit.clearMarks",
+                    "group": "navigation"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "fileAudit.toggleBadges",
+                    "when": "view == workbench.explorer.fileView",
                     "group": "navigation"
                 }
             ]

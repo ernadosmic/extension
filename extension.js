@@ -8,6 +8,7 @@ const path = require('path');
 let reviewedFiles = new Set();
 let trashFiles = new Set();
 let storageFile = null;
+let badgesEnabled = true;
 
 class FileMarkerDecorationProvider {
     constructor() {
@@ -16,17 +17,19 @@ class FileMarkerDecorationProvider {
     }
 
     provideFileDecoration(uri) {
+        if (!badgesEnabled) return undefined;
+
         if (reviewedFiles.has(uri.fsPath)) {
             return {
                 badge: '✔',
                 tooltip: 'Marked as Reviewed',
-                color: new vscode.ThemeColor('charts.green')
+                badgeColor: new vscode.ThemeColor('charts.green') // ✅ not affecting filename
             };
         } else if (trashFiles.has(uri.fsPath)) {
             return {
                 badge: '🗑',
                 tooltip: 'Marked for Deletion',
-                color: new vscode.ThemeColor('charts.red')
+                badgeColor: new vscode.ThemeColor('charts.red') // ✅ not affecting filename
             };
         }
         return undefined;
@@ -97,7 +100,13 @@ function activate(context) {
         provider.refresh();
     });
 
-    context.subscriptions.push(markReviewed, markTrash, clearMarks);
+    const toggleBadges = vscode.commands.registerCommand('fileAudit.toggleBadges', () => {
+        badgesEnabled = !badgesEnabled;
+        vscode.window.showInformationMessage(`File audit badges ${badgesEnabled ? 'enabled' : 'disabled'}`);
+        provider.refresh();
+    });
+
+    context.subscriptions.push(markReviewed, markTrash, clearMarks, toggleBadges);
 
     // Initial refresh
     provider.refresh();
